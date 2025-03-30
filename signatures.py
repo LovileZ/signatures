@@ -6,15 +6,14 @@ from eth_account.messages import encode_defunct
 def sign(m):
     w3 = Web3()
 
-    # TODO create an account for signing the message
-    account_object = 0  # Create an Eth account
-    public_key = 0  # Eth account public key
-    private_key = 0  # Eth account private key
+    # Create an account for signing the message
+    account_object = w3.eth.account.create()  # Create an Eth account
+    public_key = account_object.address  # Eth account public key
+    private_key = account_object.key  # Eth account private key
 
-    # TODO sign the given message "m"
-    message = m  # Encode the message
-    signed_message = 0  # Sign the message
-
+    # Sign the given message "m"
+    message = encode_defunct(text=m)  # Encode the message
+    signed_message = w3.eth.account.sign_message(message, private_key)  # Sign the message
 
     """You can save the account public/private keypair that prints in the next section
      for use in future assignments. You will need a funded account to pay gas fees for 
@@ -32,10 +31,10 @@ def sign(m):
 def verify(m, public_key, signed_message):
     w3 = Web3()
 
-    # TODO verify the 'signed_message' is valid given the original message 'm' and the signers 'public_key'
-    message = m  # Encode the message
-    signer = 0  # Verify the message
-    valid_signature = 0  # True if message verifies, False if message does not verify
+    # Verify the 'signed_message' is valid given the original message 'm' and the signer's 'public_key'
+    message = encode_defunct(text=m)  # Encode the message
+    signer = w3.eth.account.recover_message(message, signature=signed_message.signature)  # Recover the signer
+    valid_signature = signer == public_key  # True if message verifies, False if message does not verify
 
     assert isinstance(valid_signature, bool), "verify should return a boolean value"
     return valid_signature
